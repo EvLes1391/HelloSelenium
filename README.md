@@ -1,8 +1,8 @@
 # Проект: Автоматизация тестирования с Selenium
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![Selenium](https://img.shields.io/badge/Selenium-4.0-red)
-![Pytest](https://img.shields.io/badge/Pytest-7.0-green)
+![Python](https://img.shields.io/badge/Python-3.13.2%2B-blue)
+![Selenium](https://img.shields.io/badge/Selenium-4.31.0-red)
+![Pytest](https://img.shields.io/badge/Pytest-8.3.5-green)
 
 Проект демонстрирует базовые возможности Selenium WebDriver с использованием:
 - Автоматической загрузки драйверов через WebDriverManager

@@ -1,36 +1,46 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from pages import GooglePage
+import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
-def test_google_search():
-    chrome_options = Options()
-    chrome_options.add_argument('--ignore-ssl-errors=yes')
-    chrome_options.add_argument('--ignore-certificate-errors')
-
+@pytest.fixture
+def browser():
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(service=service)
+    yield driver
+    driver.quit()
 
-    try:
-        driver.get("https://www.google.com")
+@pytest.fixture
+def google_page(browser: WebDriver):
+    page = GooglePage(browser)
+    browser.get("https://www.google.com")
+    return page
 
-        WebDriverWait(driver, 10).until(
-            EC.title_contains("Google")
-        )
-        assert "Google" in driver.title, "Title не содержит Goggle"
+SEARCH_QUERIES = [
+    ('Hello Selenium', 'Selenium'),
+    ('QA', 'тестировщик'),
+    ('Доллар за 100к', 'курс доллара'),
+]
 
-        search_box = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.NAME, "q"))
-        )
-        search_box.send_keys("Привет Хишитори!")
-        search_box.submit()
+@pytest.mark.parametrize("query, expected_text", SEARCH_QUERIES)
+def test_google_search(google_page: GooglePage, query: tuple[str, str], expected_text: tuple[str, str]):
+    # Проверка заголовка
+    assert "Google" in google_page.get_title(), "Неверный заголовок"
 
-        WebDriverWait(driver, 10).until(
-            EC.title_contains("Привет Хишитори!")
-        )
-    finally:
-        driver.quit
+    # Поиск и проверка результатов
+    google_page.search(query)
+    first_result = google_page.get_first_result_text()
+    assert query in first_result, f"Запрос '{query}' не найден в первом результате"
+    assert expected_text in first_result, (
+        f"Ожидаемый текст '{expected_text}' не найден в результате"
+    )
 
+    # Тест 3: Проверка 3-го результата
+    third_result = google_page.get_nth_result_text(3)
+    assert third_result, "No найдено 3 результата поиска"
