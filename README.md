@@ -15,6 +15,9 @@ HelloSelenium/
 ├── tests/
 │   └── test_google.py    # Тесты поиска Google
 ├── pages/                # Для будущих Page Objects
+│   ├── __init__.py       # Для создания Python-пакета
+│   ├── base_page.py      # Фундамент РОМ
+│   └── google_page.py    # Инкапсуляция взаимодействия с Google
 ├── .gitignore
 ├── requirements.txt      # Зависимости
 └── README.md             (этот файл)
@@ -34,9 +37,3 @@ HelloSelenium/
 ```bash
 pytest tests/ -v
 ```
-
-## 📝 Пример теста
-```python
-def test_google_search():
-    driver.get("https://google.com")
-    assert "Google" in driver.title
