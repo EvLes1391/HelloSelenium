@@ -29,7 +29,7 @@ SEARCH_QUERIES = [
 ]
 
 @pytest.mark.parametrize("query, expected_text", SEARCH_QUERIES)
-def test_google_search(google_page: GooglePage, query: tuple[str, str], expected_text: tuple[str, str]):
+def test_google_search(google_page: GooglePage, query: str, expected_text: str):
     # Проверка заголовка
     assert "Google" in google_page.get_title(), "Неверный заголовок"
 
